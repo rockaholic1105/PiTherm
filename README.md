@@ -3,5 +3,4 @@ PiTherm
 
 ### About
 
-This is your project's README.md file. It helps users understand what your
-project does, how to use it and anything else they may need to know.
+A DIY Thermostat using Raspberry pi 4, MCP9808, and HC-SR04 for screen control
