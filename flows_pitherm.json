@@ -241,51 +241,6 @@
         "collapse": false
     },
     {
-        "id": "9b8f575a.b741a8",
-        "type": "ui_group",
-        "name": "Stat",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 2,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f0089344.b8ed1",
-        "type": "ui_group",
-        "name": "Ora",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 2,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f1a9197e.2dfc88",
-        "type": "ui_group",
-        "name": "Stat1",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 1,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f59caa4c.0eb048",
-        "type": "ui_group",
-        "name": "ON OFF scheduler",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 4,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "236e90ca.4e1d",
-        "type": "ui_group",
-        "name": "Stat2",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 5,
-        "disp": false,
-        "width": "6"
-    },
-    {
         "id": "55f8b52.8a0a24c",
         "type": "ui_button",
         "z": "17a728c6.565827",
@@ -5506,7 +5461,7 @@
         "msgKeyType": "elem",
         "seqKey": "payload",
         "seqKeyType": "msg",
-        "x": 720,
+        "x": 700,
         "y": 180,
         "wires": [
             [
@@ -5522,6 +5477,8 @@
         "func": "msg.payload = msg.payload[2]\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
         "x": 860,
         "y": 180,
         "wires": [
@@ -5566,7 +5523,7 @@
         "z": "559df1d7.d3a6f",
         "name": "",
         "topic": "SRF",
-        "pulse": "1",
+        "pulse": "0.1",
         "pins": "36,38",
         "x": 90,
         "y": 180,
@@ -5730,7 +5687,7 @@
         "z": "559df1d7.d3a6f",
         "name": "",
         "pauseType": "delay",
-        "timeout": "15",
+        "timeout": "5",
         "timeoutUnits": "seconds",
         "rate": "1",
         "nbRateUnits": "1",
@@ -6079,13 +6036,13 @@
         "id": "684c1161.0107d",
         "type": "switch",
         "z": "559df1d7.d3a6f",
-        "name": "<200",
+        "name": "<300",
         "property": "payload",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "lte",
-                "v": "200",
+                "v": "300",
                 "vt": "num"
             }
         ],
