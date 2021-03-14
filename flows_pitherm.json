@@ -225,51 +225,6 @@
         "collapse": false
     },
     {
-        "id": "9b8f575a.b741a8",
-        "type": "ui_group",
-        "name": "Stat",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 2,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f0089344.b8ed1",
-        "type": "ui_group",
-        "name": "Ora",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 2,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f1a9197e.2dfc88",
-        "type": "ui_group",
-        "name": "Stat1",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 1,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "f59caa4c.0eb048",
-        "type": "ui_group",
-        "name": "ON OFF scheduler",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 4,
-        "disp": false,
-        "width": "6"
-    },
-    {
-        "id": "236e90ca.4e1d",
-        "type": "ui_group",
-        "name": "Stat2",
-        "tab": "8eef0cc0.5b1bf",
-        "order": 5,
-        "disp": false,
-        "width": "6"
-    },
-    {
         "id": "8eef0cc0.5b1bf",
         "type": "ui_tab",
         "name": "Schedulers",
@@ -5506,7 +5461,7 @@
         "msgKeyType": "elem",
         "seqKey": "payload",
         "seqKeyType": "msg",
-        "x": 870,
+        "x": 700,
         "y": 180,
         "wires": [
             [
@@ -5522,10 +5477,14 @@
         "func": "msg.payload = msg.payload[2]\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1040,
+        "initialize": "",
+        "finalize": "",
+        "x": 870,
         "y": 180,
         "wires": [
-            []
+            [
+                "8be252a9.05526"
+            ]
         ]
     },
     {
@@ -5554,7 +5513,7 @@
         "z": "559df1d7.d3a6f",
         "name": "Median Filter",
         "info": "Median Filter for Ultrasonic sensor due to the characteristics of the device.\n\nPurge outlying values by creating a buffter of 5 values and then sort by ascending order.\n\nOutstanding values will always be at the top or bottom of the array. Select the middle value of the array to increase filter the data.",
-        "x": 700,
+        "x": 530,
         "y": 140,
         "wires": []
     },
@@ -5564,15 +5523,13 @@
         "z": "559df1d7.d3a6f",
         "name": "",
         "topic": "SRF",
-        "pulse": "1",
+        "pulse": "0.2",
         "pins": "36,38",
         "x": 120,
         "y": 180,
         "wires": [
             [
-                "f1f749f5.eaefb8",
-                "1c832e2d.d23532",
-                "a50763d0.6fe56"
+                "1c832e2d.d23532"
             ]
         ]
     },
@@ -5587,30 +5544,13 @@
         "pushAfterClear": false,
         "extra": false,
         "perTopic": false,
-        "x": 710,
+        "x": 530,
         "y": 180,
         "wires": [
             [
                 "34c8f822.9bd1a8"
             ]
         ]
-    },
-    {
-        "id": "f1f749f5.eaefb8",
-        "type": "debug",
-        "z": "559df1d7.d3a6f",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 290,
-        "y": 220,
-        "wires": []
     },
     {
         "id": "fb265512.fb83b8",
@@ -5957,8 +5897,8 @@
         "links": [
             "5a8d2c2e.d92424"
         ],
-        "x": 475,
-        "y": 300,
+        "x": 1455,
+        "y": 180,
         "wires": []
     },
     {
@@ -5980,30 +5920,13 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 320,
-        "y": 300,
+        "x": 1300,
+        "y": 180,
         "wires": [
             [
-                "7a541f78.2e02d",
-                "e23c495.714d3b8"
+                "7a541f78.2e02d"
             ]
         ]
-    },
-    {
-        "id": "e23c495.714d3b8",
-        "type": "debug",
-        "z": "559df1d7.d3a6f",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 530,
-        "y": 260,
-        "wires": []
     },
     {
         "id": "a1bd6c17.5fc68",
@@ -6053,8 +5976,8 @@
         "topic": "",
         "payload": "true",
         "payloadType": "bool",
-        "x": 290,
-        "y": 340,
+        "x": 130,
+        "y": 220,
         "wires": [
             [
                 "7a541f78.2e02d"
@@ -6108,6 +6031,56 @@
         "wires": [
             [
                 "eb27b45b.3c4bc8"
+            ]
+        ]
+    },
+    {
+        "id": "8be252a9.05526",
+        "type": "switch",
+        "z": "559df1d7.d3a6f",
+        "name": ">2",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1030,
+        "y": 180,
+        "wires": [
+            [
+                "684c1161.0107d"
+            ]
+        ]
+    },
+    {
+        "id": "684c1161.0107d",
+        "type": "switch",
+        "z": "559df1d7.d3a6f",
+        "name": "<200",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "200",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1150,
+        "y": 180,
+        "wires": [
+            [
+                "a50763d0.6fe56"
             ]
         ]
     }

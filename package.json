@@ -2,7 +2,9 @@
     "name": "PiTherm",
     "description": "A Node-RED Project",
     "version": "0.0.1",
-    "dependencies": {},
+    "dependencies": {
+        "node-red-node-pisrf": "0.1.4"
+    },
     "node-red": {
         "settings": {
             "flowFile": "flows_pitherm.json",
