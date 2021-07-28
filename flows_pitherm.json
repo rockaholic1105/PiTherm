@@ -28,6 +28,20 @@
         "info": ""
     },
     {
+        "id": "2089cd.9333b634",
+        "type": "tab",
+        "label": "Auto Update",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "62ba2bde.f2d8e4",
+        "type": "tab",
+        "label": "Settings Menu",
+        "disabled": false,
+        "info": ""
+    },
+    {
         "id": "c908fc37.9091",
         "type": "ui_tab",
         "name": "Smart Thermostat",
@@ -126,7 +140,7 @@
             }
         },
         "site": {
-            "name": "Node-RED Thermostat",
+            "name": "PiTherm",
             "hideToolbar": "true",
             "allowSwipe": "true",
             "lockMenu": "icon",
@@ -190,7 +204,7 @@
         "type": "ui_group",
         "name": "Basement West",
         "tab": "16bd378a.15e1c8",
-        "order": 3,
+        "order": 4,
         "disp": true,
         "width": "7",
         "collapse": false
@@ -219,7 +233,7 @@
         "type": "ui_group",
         "name": "Basement East",
         "tab": "16bd378a.15e1c8",
-        "order": 2,
+        "order": 3,
         "disp": true,
         "width": "7",
         "collapse": false
@@ -228,17 +242,46 @@
         "id": "8eef0cc0.5b1bf",
         "type": "ui_tab",
         "name": "Schedulers",
-        "icon": "dashboard"
+        "icon": "dashboard",
+        "order": 3
     },
     {
         "id": "25c1888c.8b6c08",
         "type": "ui_group",
         "name": "Garage",
         "tab": "16bd378a.15e1c8",
-        "order": 4,
+        "order": 2,
         "disp": true,
-        "width": "7",
+        "width": "14",
         "collapse": false
+    },
+    {
+        "id": "6a4d510d.5de65",
+        "type": "ui_group",
+        "name": "Wifi Network",
+        "tab": "56715436.c2591c",
+        "order": 2,
+        "disp": true,
+        "width": "14",
+        "collapse": false
+    },
+    {
+        "id": "56715436.c2591c",
+        "type": "ui_tab",
+        "name": "Settings",
+        "icon": "settings",
+        "order": 5,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "b4811140.0edca",
+        "type": "ui_link",
+        "name": "Garage Pi",
+        "link": "http://garagepi.seeare:1880/ui",
+        "icon": "directions_car",
+        "target": "iframe",
+        "order": 4
     },
     {
         "id": "55f8b52.8a0a24c",
@@ -1689,11 +1732,11 @@
         "width": 0,
         "height": 0,
         "gtype": "gage",
-        "title": "",
-        "label": "units",
+        "title": "{{msg.topic}}",
+        "label": "Degrees",
         "format": "{{value | number:1}}",
-        "min": "60",
-        "max": "80",
+        "min": "0",
+        "max": "100",
         "colors": [
             "#0056f5",
             "#00e61b",
@@ -1701,8 +1744,8 @@
         ],
         "seg1": "66",
         "seg2": "76",
-        "x": 1370,
-        "y": 2400,
+        "x": 1170,
+        "y": 2640,
         "wires": []
     },
     {
@@ -1716,7 +1759,7 @@
         "height": 0,
         "label": "",
         "chartType": "line",
-        "legend": "false",
+        "legend": "true",
         "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "",
@@ -1730,8 +1773,8 @@
         "useOneColor": false,
         "useUTC": false,
         "colors": [
-            "#1f77b4",
-            "#aec7e8",
+            "#6da6d0",
+            "#42b319",
             "#ff7f0e",
             "#2ca02c",
             "#98df8a",
@@ -1788,7 +1831,9 @@
         "y": 320,
         "wires": [
             [
-                "80148cde.01018"
+                "80148cde.01018",
+                "1fdbed8e.b28012",
+                "10b9f727.b14099"
             ]
         ]
     },
@@ -2107,12 +2152,13 @@
             "c1a7afb3.dd825"
         ],
         "x": 1315,
-        "y": 1980,
+        "y": 2020,
         "wires": [
             [
                 "fc878b19.611c18",
                 "90de10d4.aa51f",
-                "5dea00c5.72eb3"
+                "5dea00c5.72eb3",
+                "a5b9f6f.38b1608"
             ]
         ]
     },
@@ -2175,7 +2221,7 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "Temperature",
+                "to": "Inside",
                 "tot": "str"
             }
         ],
@@ -2188,9 +2234,10 @@
         "y": 2400,
         "wires": [
             [
-                "282ff62b.38cfda",
                 "f05f5387.ae944",
-                "fb265512.fb83b8"
+                "fb265512.fb83b8",
+                "5f146b9.0954394",
+                "3eee3d3a.179fe2"
             ]
         ]
     },
@@ -2249,27 +2296,6 @@
         "wires": []
     },
     {
-        "id": "99fb8fce.72218",
-        "type": "function",
-        "z": "17a728c6.565827",
-        "name": "Range",
-        "func": "//Not finished!!!\nvar actual = global.get('actualTemp');\nvar setPoint = global.get('setPoint');\nvar range = global.get('range');\nvar setPointHigh = setPoint + range;\nvar setPointLow = setPoint - range;\n\nif(actual < setPointLow){\n    msg.payload = false;\n}\nelse if(actual > setPointHigh){\n    msg.payload = true;\n}\n\nif(msg.payload === true || msg.payload === false){\n   return msg; \n}",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 690,
-        "y": 1940,
-        "wires": [
-            [
-                "284c21d3.82495e",
-                "fc878b19.611c18",
-                "90de10d4.aa51f",
-                "5dea00c5.72eb3"
-            ]
-        ]
-    },
-    {
         "id": "f05f5387.ae944",
         "type": "link out",
         "z": "17a728c6.565827",
@@ -2298,132 +2324,6 @@
         ]
     },
     {
-        "id": "284c21d3.82495e",
-        "type": "switch",
-        "z": "17a728c6.565827",
-        "name": "",
-        "property": "payload",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "true"
-            },
-            {
-                "t": "false"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 890,
-        "y": 2080,
-        "wires": [
-            [
-                "c2120d12.09daa"
-            ],
-            [
-                "7da087ef.3acb88"
-            ]
-        ]
-    },
-    {
-        "id": "62a2777b.cb6ef8",
-        "type": "comment",
-        "z": "17a728c6.565827",
-        "name": "FailSafe",
-        "info": "",
-        "x": 890,
-        "y": 2040,
-        "wires": []
-    },
-    {
-        "id": "c2120d12.09daa",
-        "type": "delay",
-        "z": "17a728c6.565827",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "15",
-        "timeoutUnits": "minutes",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "x": 1110,
-        "y": 2040,
-        "wires": [
-            [
-                "5e47ed2c.c1dce4"
-            ]
-        ]
-    },
-    {
-        "id": "5e47ed2c.c1dce4",
-        "type": "change",
-        "z": "17a728c6.565827",
-        "name": "AC Enable",
-        "rules": [
-            {
-                "t": "set",
-                "p": "acEnable",
-                "pt": "global",
-                "to": "false",
-                "tot": "bool"
-            },
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "false",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 1270,
-        "y": 2040,
-        "wires": [
-            [
-                "fc878b19.611c18",
-                "90de10d4.aa51f",
-                "8e0578d8.28a3f8",
-                "5dea00c5.72eb3"
-            ]
-        ]
-    },
-    {
-        "id": "7da087ef.3acb88",
-        "type": "change",
-        "z": "17a728c6.565827",
-        "name": "Rest",
-        "rules": [
-            {
-                "t": "set",
-                "p": "reset",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 1030,
-        "y": 2100,
-        "wires": [
-            [
-                "c2120d12.09daa"
-            ]
-        ]
-    },
-    {
         "id": "62662072.fd6d4",
         "type": "switch",
         "z": "17a728c6.565827",
@@ -2445,11 +2345,9 @@
         "y": 1940,
         "wires": [
             [
-                "99fb8fce.72218"
+                "75719cff.d644f4"
             ],
-            [
-                "ef18a322.947fc"
-            ]
+            []
         ]
     },
     {
@@ -2547,7 +2445,7 @@
         "id": "7c4f0e81.d13c8",
         "type": "change",
         "z": "17a728c6.565827",
-        "name": "AC Enable",
+        "name": "Heat Enable",
         "rules": [
             {
                 "t": "set",
@@ -3848,10 +3746,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1520,
-        "y": 2040,
+        "x": 1540,
+        "y": 1900,
         "wires": [
-            []
+            [
+                "e8a92fc7.9fd3a"
+            ]
         ]
     },
     {
@@ -3874,52 +3774,6 @@
         "wires": [
             [
                 "d695bb4e.d5f8f8"
-            ]
-        ]
-    },
-    {
-        "id": "ef18a322.947fc",
-        "type": "switch",
-        "z": "17a728c6.565827",
-        "name": "qHeat F",
-        "property": "qHeat",
-        "propertyType": "global",
-        "rules": [
-            {
-                "t": "false"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 740,
-        "y": 2120,
-        "wires": [
-            [
-                "9dd61488.faa928"
-            ]
-        ]
-    },
-    {
-        "id": "9dd61488.faa928",
-        "type": "switch",
-        "z": "17a728c6.565827",
-        "name": "qAC F",
-        "property": "qAC",
-        "propertyType": "global",
-        "rules": [
-            {
-                "t": "false"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 870,
-        "y": 2120,
-        "wires": [
-            [
-                "7da087ef.3acb88"
             ]
         ]
     },
@@ -4132,8 +3986,8 @@
         "timestampField": "timestamp",
         "repeatTimeout": false,
         "name": "",
-        "x": 2020,
-        "y": 1740,
+        "x": 2120,
+        "y": 1820,
         "wires": [
             [
                 "d521ec8d.e3681"
@@ -4159,8 +4013,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 2180,
-        "y": 1740,
+        "x": 2280,
+        "y": 1820,
         "wires": [
             [
                 "b07db7e0.a759a8"
@@ -4211,8 +4065,8 @@
         "label": "Off Time",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
-        "x": 2340,
-        "y": 1720,
+        "x": 2440,
+        "y": 1800,
         "wires": []
     },
     {
@@ -4227,8 +4081,8 @@
         "label": "On Time",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
-        "x": 2340,
-        "y": 1760,
+        "x": 2440,
+        "y": 1840,
         "wires": []
     },
     {
@@ -4270,8 +4124,8 @@
         "timestampField": "timestamp",
         "repeatTimeout": false,
         "name": "",
-        "x": 2020,
-        "y": 1840,
+        "x": 2120,
+        "y": 1920,
         "wires": [
             [
                 "8955ead8.c02228"
@@ -4297,8 +4151,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 2180,
-        "y": 1840,
+        "x": 2280,
+        "y": 1920,
         "wires": [
             [
                 "61e15bca.3837c4"
@@ -4327,8 +4181,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 2370,
-        "y": 1860,
+        "x": 2470,
+        "y": 1940,
         "wires": [
             [
                 "3a38aeb0.064092"
@@ -4354,8 +4208,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 2370,
-        "y": 1820,
+        "x": 2470,
+        "y": 1900,
         "wires": [
             [
                 "3a38aeb0.064092"
@@ -4372,8 +4226,8 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 2600,
-        "y": 1840,
+        "x": 2700,
+        "y": 1920,
         "wires": [
             [
                 "7f761c49.e01374",
@@ -4393,8 +4247,8 @@
         "label": "Cycles Per Hour",
         "format": "{{msg.payload | number:1}}",
         "layout": "row-spread",
-        "x": 2780,
-        "y": 1840,
+        "x": 2880,
+        "y": 1920,
         "wires": []
     },
     {
@@ -4410,8 +4264,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 2760,
-        "y": 1800,
+        "x": 2860,
+        "y": 1880,
         "wires": []
     },
     {
@@ -4424,61 +4278,11 @@
         "start": "",
         "inout": "out",
         "property": "payload",
-        "x": 1870,
-        "y": 1940,
+        "x": 1730,
+        "y": 1900,
         "wires": [
             [
                 "fe08a6a5.5fde78"
-            ]
-        ]
-    },
-    {
-        "id": "579b1c34.fac724",
-        "type": "inject",
-        "z": "17a728c6.565827",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "true",
-        "payloadType": "bool",
-        "x": 1740,
-        "y": 1880,
-        "wires": [
-            [
-                "e8a92fc7.9fd3a"
-            ]
-        ]
-    },
-    {
-        "id": "5e09f76.a005708",
-        "type": "inject",
-        "z": "17a728c6.565827",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "false",
-        "payloadType": "bool",
-        "x": 1730,
-        "y": 2000,
-        "wires": [
-            [
-                "e8a92fc7.9fd3a"
             ]
         ]
     },
@@ -4501,11 +4305,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1920,
+        "x": 1900,
         "y": 1900,
         "wires": [
             [
-                "f8e4ff7.3bf24"
+                "f8e4ff7.3bf24",
+                "2ae0ca8c.4029e6"
             ]
         ]
     },
@@ -4522,8 +4327,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1990,
-        "y": 1680,
+        "x": 2090,
+        "y": 1760,
         "wires": []
     },
     {
@@ -4830,6 +4635,7 @@
         "id": "28379556.fe9e4a",
         "type": "http in",
         "z": "8bb1d781.d12288",
+        "d": true,
         "name": "",
         "url": "/motion",
         "method": "get",
@@ -4965,6 +4771,7 @@
         "id": "6f01b14c.4f4f4",
         "type": "http in",
         "z": "d4068d94.a2c6e",
+        "d": true,
         "name": "",
         "url": "/motion",
         "method": "get",
@@ -5830,7 +5637,9 @@
         "x": 890,
         "y": 700,
         "wires": [
-            []
+            [
+                "b1865325.ea979"
+            ]
         ]
     },
     {
@@ -5897,8 +5706,8 @@
         "links": [
             "5a8d2c2e.d92424"
         ],
-        "x": 1255,
-        "y": 200,
+        "x": 1575,
+        "y": 220,
         "wires": []
     },
     {
@@ -6036,13 +5845,13 @@
         "id": "684c1161.0107d",
         "type": "switch",
         "z": "559df1d7.d3a6f",
-        "name": "<300",
+        "name": "<200",
         "property": "payload",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "lte",
-                "v": "300",
+                "v": "200",
                 "vt": "num"
             }
         ],
@@ -6053,7 +5862,886 @@
         "y": 180,
         "wires": [
             [
+                "f94da004.ce51e"
+            ]
+        ]
+    },
+    {
+        "id": "8d066b80.9393c8",
+        "type": "exec",
+        "z": "2089cd.9333b634",
+        "command": "sudo apt update",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "61feb7d7.2520d8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "81d4653a.3c3df8",
+        "type": "exec",
+        "z": "2089cd.9333b634",
+        "command": "sudo apt -y upgrade",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 920,
+        "y": 160,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "5472b6e2.5e6918",
+        "type": "cronplus",
+        "z": "2089cd.9333b634",
+        "name": "",
+        "outputField": "payload",
+        "timeZone": "America/Detroit",
+        "commandResponseMsgOutput": "output1",
+        "outputs": 1,
+        "options": [
+            {
+                "topic": "Updates",
+                "payload": "true",
+                "expression": "0 0 4 * * *",
+                "name": "Updates",
+                "expressionType": "cron",
+                "payloadType": "bool",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset",
+                "location": ""
+            }
+        ],
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "8d066b80.9393c8"
+            ]
+        ]
+    },
+    {
+        "id": "61feb7d7.2520d8",
+        "type": "switch",
+        "z": "2089cd.9333b634",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "All packages are up to date.",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 670,
+        "y": 160,
+        "wires": [
+            [],
+            [
+                "81d4653a.3c3df8"
+            ]
+        ]
+    },
+    {
+        "id": "f94da004.ce51e",
+        "type": "counter",
+        "z": "559df1d7.d3a6f",
+        "inc": 1,
+        "name": "",
+        "x": 1280,
+        "y": 180,
+        "wires": [
+            [
+                "7b11795b.13cef8"
+            ]
+        ]
+    },
+    {
+        "id": "7b11795b.13cef8",
+        "type": "switch",
+        "z": "559df1d7.d3a6f",
+        "name": "Count > 2",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1420,
+        "y": 180,
+        "wires": [
+            [
                 "7a541f78.2e02d"
+            ]
+        ]
+    },
+    {
+        "id": "b1865325.ea979",
+        "type": "change",
+        "z": "559df1d7.d3a6f",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1100,
+        "y": 700,
+        "wires": [
+            [
+                "f94da004.ce51e"
+            ]
+        ]
+    },
+    {
+        "id": "b7173262.61628",
+        "type": "ui_template",
+        "z": "8bb1d781.d12288",
+        "group": "25c1888c.8b6c08",
+        "name": "Garage 2 Stream",
+        "order": 1,
+        "width": "7",
+        "height": "5",
+        "format": "<img width=\"600\" height=\"600\" src=\"http://192.168.0.20:8085\" />",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "x": 470,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1e7a6241.6157ce",
+        "type": "change",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "ssid=([\"'])(?:(?=(\\\\?))\\2.)*?\\1",
+                "fromt": "re",
+                "to": "ssid=\"foobar\"",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8d776159.b0afe",
+        "type": "change",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "psk=([\"'])(?:(?=(\\\\?))\\2.)*?\\1",
+                "fromt": "re",
+                "to": "password",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 580,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b973810a.e5c0f",
+        "type": "debug",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 650,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "e26fbcc4.5a681",
+        "type": "ui_text_input",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "label": "Network Name",
+        "tooltip": "",
+        "group": "6a4d510d.5de65",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "x": 480,
+        "y": 520,
+        "wires": [
+            [
+                "b973810a.e5c0f"
+            ]
+        ]
+    },
+    {
+        "id": "3951049.3fad1fc",
+        "type": "ui_text_input",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "label": "Password",
+        "tooltip": "",
+        "group": "6a4d510d.5de65",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "password",
+        "delay": 300,
+        "topic": "",
+        "x": 460,
+        "y": 560,
+        "wires": [
+            [
+                "b973810a.e5c0f"
+            ]
+        ]
+    },
+    {
+        "id": "c5db1e72.3ef58",
+        "type": "ui_template",
+        "z": "62ba2bde.f2d8e4",
+        "group": "6a4d510d.5de65",
+        "name": "Virtual Keyboard",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<script> \n    \n// the semi-colon before function invocation is a safety net against concatenated\n// scripts and/or other plugins which may not be closed properly.\n; (function ($, window, document, undefined) {\n\n    // undefined is used here as the undefined global variable in ECMAScript 3 is\n    // mutable (ie. it can be changed by someone else). undefined isn't really being\n    // passed in so we can ensure the value of it is truly undefined. In ES5, undefined\n    // can no longer be modified.\n\n    // window and document are passed through as local variable rather than global\n    // as this (slightly) quickens the resolution process and can be more efficiently\n    // minified (especially when both are regularly referenced in your plugin).\n\n    // Create the defaults once\n    var pluginName = \"jkeyboard\",\n        defaults = {\n            layout: \"english\",\n            input: $('#input'),\n            customLayouts: {\n                selectable: []\n            },\n        };\n\n\n    var function_keys = {\n        backspace: {\n            text: 'DEL',\n        },\n        return: {\n            text: 'Enter'\n        },\n        shift: {\n            text: 'Shift'\n        },\n        space: {\n            text: 'Space'\n        },\n        numeric_switch: {\n            text: '123',\n            command: function () {\n                this.createKeyboard('numeric');\n                this.events();\n            }\n        },\n        layout_switch: {\n            text: '<i class=\"fa fa-keyboard-o\" aria-hidden=\"true\"></i>',\n            command: function () {\n                var l = this.toggleLayout();\n                this.createKeyboard(l);\n                this.events();\n            }\n        },\n        character_switch: {\n            text: 'ABC',\n            command: function () {\n                this.createKeyboard(layout);\n                this.events();\n            }\n        },\n        symbol_switch: {\n            text: '#+=',\n            command: function () {\n                this.createKeyboard('symbolic');\n                this.events();\n            }\n        }\n    };\n\n\n    var layouts = {\n        selectable: ['azeri', 'english', 'russian','french', 'emoji'],\n        azeri: [\n            ['q', 'ü', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ö', 'ğ'],\n            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ı', 'ə'],\n            ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'ç', 'ş', 'backspace'],\n            ['numeric_switch', 'layout_switch', 'space', 'return']\n        ],\n        english: [\n            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',],\n            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',],\n            ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'backspace'],\n            ['numeric_switch', 'layout_switch', 'space', 'return']\n        ],\n        russian: [\n            ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х'],\n            ['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э'],\n            ['shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', 'backspace'],\n            ['numeric_switch', 'layout_switch', 'space', 'return']\n        ],\n        french: [\n            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',],\n            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l','à','ç'],\n            ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm','é','è', 'backspace'],\n            ['numeric_switch', 'layout_switch', 'space', 'return']\n        ],\n        emoji: [\n            ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊',],\n            ['😋', '😎', '😍', '😘', 'g', 'h', 'j', 'k', 'l','à','ç'],\n            ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm','é','è', 'backspace'],\n            ['numeric_switch', 'layout_switch', 'space', 'return']\n        ],            \n        numeric: [\n            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],\n            ['-', '/', ':', ';', '(', ')', '$', '&', '@', '\"'],\n            ['symbol_switch', '.', ',', '?', '!', \"'\", 'backspace'],\n            ['character_switch', 'layout_switch', 'space', 'return'],\n        ],\n        numbers_only: [\n            ['1', '2', '3',],\n            ['4', '5', '6',],\n            ['7', '8', '9',],\n            ['0', 'backspace'],\n        ],\n        symbolic: [\n            ['[', ']', '{', '}', '#', '%', '^', '*', '+', '='],\n            ['_', '\\\\', '|', '~', '<', '>'],\n            ['numeric_switch', '.', ',', '?', '!', \"'\", 'backspace'],\n            ['character_switch', 'layout_switch', 'space', 'return'],\n\n        ]\n    }\n\n    var shift = false, capslock = false, layout = 'english', layout_id = 0;\n\n    // The actual plugin constructor\n    function Plugin(element, options) {\n        this.element = element;\n        // jQuery has an extend method which merges the contents of two or\n        // more objects, storing the result in the first object. The first object\n        // is generally empty as we don't want to alter the default options for\n        // future instances of the plugin\n        this.settings = $.extend({}, defaults, options);\n        // Extend & Merge the cusom layouts\n        layouts = $.extend(true, {}, this.settings.customLayouts, layouts);\n        if (Array.isArray(this.settings.customLayouts.selectable)) {\n            $.merge(layouts.selectable, this.settings.customLayouts.selectable);\n        }\n        this._defaults = defaults;\n        this._name = pluginName;\n        this.init();\n    }\n\n    Plugin.prototype = {\n        init: function () {\n            layout = this.settings.layout;\n            this.createKeyboard(layout);\n            this.events();\n        },\n\n        setInput: function (newInputField) {\n            this.settings.input = newInputField;\n        },\n\n        createKeyboard: function (layout) {\n            shift = false;\n            capslock = false;\n\n            var keyboard_container = $('<ul/>').addClass('jkeyboard'),\n                me = this;\n\n            layouts[layout].forEach(function (line, index) {\n                var line_container = $('<li/>').addClass('jline');\n                line_container.append(me.createLine(line));\n                keyboard_container.append(line_container);\n            });\n\n            $(this.element).html('').append(keyboard_container);\n        },\n\n        createLine: function (line) {\n            var line_container = $('<ul/>');\n\n            line.forEach(function (key, index) {\n                var key_container = $('<li/>').addClass('jkey').data('command', key);\n\n                if (function_keys[key]) {\n                    key_container.addClass(key).html(function_keys[key].text);\n                }\n                else {\n                    key_container.addClass('letter').html(key);\n                }\n\n                line_container.append(key_container);\n            })\n\n            return line_container;\n        },\n\n        events: function () {\n            var letters = $(this.element).find('.letter'),\n                shift_key = $(this.element).find('.shift'),\n                space_key = $(this.element).find('.space'),\n                backspace_key = $(this.element).find('.backspace'),\n                return_key = $(this.element).find('.return'),\n\n                me = this,\n                fkeys = Object.keys(function_keys).map(function (k) {\n                    return '.' + k;\n                }).join(',');\n\n            letters.on('click', function () {\n                me.type((shift || capslock) ? $(this).text().toUpperCase() : $(this).text());\n            });\n\n            space_key.on('click', function () {\n                me.type(' ');\n            });\n\n            return_key.on('click', function () {\n                me.type(\"\\n\");\n                me.settings.input.parents('form').submit();\n            });\n\n            backspace_key.on('click', function () {\n                me.backspace();\n            });\n\n            shift_key.on('click', function () {\n                if (capslock) {\n                    me.toggleShiftOff();\n                    capslock = false;\n                } else {\n                    me.toggleShiftOn();\n                }\n            }).on('dblclick', function () {\n                capslock = true;\n            });\n\n\n            $(fkeys).on('click', function () {\n                var command = function_keys[$(this).data('command')].command;\n                if (!command) return;\n\n                command.call(me);\n            });\n        },\n\n        type: function (key) {\n            var input = this.settings.input,\n                val = input.val(),\n                input_node = input.get(0),\n                start = input_node.selectionStart,\n                end = input_node.selectionEnd;\n\n            var max_length = $(input).attr(\"maxlength\");\n            if (start == end && end == val.length) {\n                if (!max_length || val.length < max_length) {\n                    input.val(val + key);\n                    input.change()\n                    $('#vkeyname').text(val + key)\n                }\n            } else {\n                if (input_node.type == \"text\"){\n                    var new_string = this.insertToString(start, end, val, key);\n                    input.val(new_string);\n                    start++;\n                    end = start;\n                    input_node.setSelectionRange(start, end);\n                }else{\n                    input.val(val + key);\n                }\n                input.change()\n                $('#vkeyname').text(val + key)\n                \n            }\n            input.trigger('focus');\n\n            if (shift && !capslock) {\n                this.toggleShiftOff();\n            }\n        },\n\n        backspace: function () {\n            var input = this.settings.input,\n                val = input.val();\n                input_node = input.get(0),\n                start = input_node.selectionStart,\n                end = input_node.selectionEnd;\n            if (input.type == \"text\"){\n                input.val(val.slice(0, start-1) + val.slice(start))\n                input_node.setSelectionRange(start-1, start-1);\n                console.log(val)\n                $('#vkeyname').text(val)\n            }else{\n                input.val(val.slice(0,-1))\n                $('#vkeyname').text(val.slice(0,-1))\n            }\n            input.change()\n            input.focus()\n        },\n\n        toggleShiftOn: function () {\n            var letters = $(this.element).find('.letter'),\n                shift_key = $(this.element).find('.shift');\n\n            letters.addClass('uppercase');\n            shift_key.addClass('active')\n            shift = true;\n        },\n\n        toggleShiftOff: function () {\n            var letters = $(this.element).find('.letter'),\n                shift_key = $(this.element).find('.shift');\n\n            letters.removeClass('uppercase');\n            shift_key.removeClass('active');\n            shift = false;\n        },\n\n        toggleLayout: function () {\n            layout_id = layout_id || 0;\n            var plain_layouts = layouts.selectable;\n            layout_id++;\n\n            var current_id = layout_id % plain_layouts.length;\n            var SelectedLayoutName = plain_layouts[current_id];\n            $('#vkeyname').text('V-Keyboard ' + SelectedLayoutName )\n            return plain_layouts[current_id];\n        },\n\n        insertToString: function (start, end, string, insert_string) {\n            return string.substring(0, start) + insert_string + string.substring(end, string.length);\n        }\n    };\n\n        /*\n\t\t// A really lightweight plugin wrapper around the constructor,\n\t\t// preventing against multiple instantiations\n\t\t$.fn[ pluginName ] = function ( options ) {\n\t\t\t\treturn this.each(function() {\n\t\t\t\t\t\tif ( !$.data( this, \"plugin_\" + pluginName ) ) {\n\t\t\t\t\t\t\t\t$.data( this, \"plugin_\" + pluginName, new Plugin( this, options ) );\n\t\t\t\t\t\t}\n\t\t\t\t});\n\t\t};\n        */\n        var methods = {\n            init: function(options) {\n                if (!this.data(\"plugin_\" + pluginName)) {\n                    this.data(\"plugin_\" + pluginName, new Plugin(this, options));\n                }\n            },\n\t\t\tsetInput: function(content) {\n\t\t\t\tthis.data(\"plugin_\" + pluginName).setInput($(content));\n            },\n            setLayout: function(layoutname) {\n                // change layout if it is not match current\n                object = this.data(\"plugin_\" + pluginName);\n                if (typeof(layouts[layoutname]) !== 'undefined' && object.settings.layout != layoutname) {\n                    object.settings.layout = layoutname;\n                    object.createKeyboard(layoutname);\n                    object.events();\n                };\n            },\n        };\n\n\t\t$.fn[pluginName] = function (methodOrOptions) {\n            if (methods[methodOrOptions]) {\n                return methods[methodOrOptions].apply(this.first(), Array.prototype.slice.call( arguments, 1));\n            } else if (typeof methodOrOptions === 'object' || ! methodOrOptions) {\n                // Default to \"init\"\n                return methods.init.apply(this.first(), arguments);\n            } else {\n                $.error('Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip');\n            }\n        };\n\n})(jQuery, window, document);\n</script>\n<style>\n    .jkeyboard {\n  display: inline-block;\n}\n.jkeyboard, .jkeyboard .jline, .jkeyboard .jline ul {\n  display: block;\n  margin: 0;\n  padding: 0;\n}\n.jkeyboard .jline {\n  text-align: center;\n  margin-left: -14px;\n}\n.jkeyboard .jline ul li {\n  font-family: arial, sans-serif;\n  font-size: 20px;\n  display: inline-block;\n  border: 1px solid #468db3;\n  -webkit-box-shadow: 0 0 3px #468db3;\n  -webkit-box-shadow: inset 0 0 3px #468db3;\n  margin: 5px 0 1px 6px;\n  color: #000000;\n  border-radius: 5px;\n  width: 52px;\n  height: 52px;\n  box-sizing: border-box;\n  text-align: center;\n  line-height: 52px;\n  overflow: hidden;\n  cursor: pointer;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -khtml-user-select: none;\n  -moz-user-select: -moz-none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.jkeyboard .jline ul li.uppercase {\n  text-transform: uppercase;\n}\n.jkeyboard .jline ul li:hover, .jkeyboard .jline ul li:active {\n  background-color: #185a82;\n}\n.jkeyboard .jline .return {\n  width: 80px;\n}\n.jkeyboard .jline .space {\n  width: 366px;\n}\n.jkeyboard .jline .numeric_switch {\n  width: 65px;\n}\n.jkeyboard .jline .layout_switch {\n}\n.jkeyboard .jline .shift {\n  width: 60px;\n}\n.jkeyboard .jline .backspace {\n  width: 69px;\n}\n</style>\n\n\n\n\n<style>\nbody {font-family: Arial, Helvetica, sans-serif;}\n\n.nr-dashboard-theme .nr-dashboard-template .md-button:not(:first-of-type) {\n    margin-top: 0px;\n}\n\n/* The Modal (background) */\n.modal {\n    display: none; /* Hidden by default */\n    position: fixed; /* Stay in place */\n    opacity:0.99;\n    z-index: 100; /* Sit on top */\n    left: 0;\n    top: 0;\n    width: 100%; /* Full width */\n    height: 100%; /* Full height */\n    overflow: auto; /* Enable scroll if needed */\n    background-color: rgb(0,0,0); /* Fallback color */\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\n}\n\n/* Modal Content */\n.modal-content {\n    position: fixed;\n    background-color: #fefefe;\n    margin: auto;\n    padding: 0;\n    bottom: 0%;\n    left: 50%;\n    transform: translate(-50%, 0%);\n    border: 1px solid #888;\n    width: fit-content;\n    max-width: 100%;\n    max-height: 100%;\n    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);\n    -webkit-animation-name: animate;\n    -webkit-animation-duration: 0.4s;\n    animation-name: animate;\n    animation-duration: 0.4s\n}\n\n/* Add Animation */\n@-webkit-keyframes animate {\n    from {bottom:100%; opacity:0} \n    to {bottom:0%; opacity:1}\n}\n\n@keyframes animate {\n    from {bottom:100%; opacity:0}\n    to {bottom:0%; opacity:1}\n}\n\n/* The Close Button */\n.close {\n    color: black;\n    float: right;\n    font-size: 28px;\n    font-weight: bold;\n}\n\n.close:hover,\n.close:focus {\n    color: #000;\n    text-decoration: none;\n    cursor: pointer;\n}\n\n.modal-header {\n    padding: 2px 16px;\n    background-color: aliceblue;\n    color: white;\n}\n\n.modal-body {padding: 2px 16px;}\n\n.modal-footer {\n    padding: 2px 16px;\n    background-color: #5cb85c;\n    color: white;\n}\n</style>\n\n<!-- The Modal -->\n<div id=\"myModal\" class=\"modal\">\n\n  <!-- Modal content -->\n  <div class=\"modal-content\">\n      <div class=\"modal-header\">\n      <span class=\"close\" onclick=\"closeModal()\">&times;</span>\n      <h2 id=\"vkeyname\" style=\"background-color: aliceblue !important; color: black !important; text-align: center; min-height: 30px;\">V-Keyboard</h2>\n    </div>\n    <div class=\"modal-body\">\n        <div id=\"keyboard\"></div>\n        <div>\n        </div>\n    </div>\n  </div>\n</div>\n\n\n<script>\n    // Get the modal\nvar modal = document.getElementById('myModal');\n\n/*\n$('input[type=text]').click(function () {\n    $('#keyboard').unbind().removeData();\n        $('#keyboard').jkeyboard({\n            layout: \"english\",\n            input: $('#'+$(this).attr('id'))\n    });\n});\n\n$('input[type=number]').click(function () {\n    $('#keyboard').unbind().removeData();\n        $('#keyboard').jkeyboard({\n            layout: \"numbers_only\",\n            input: $('#'+$(this).attr('id'))\n    });\n});\n*/\n\nvar inputTags;\nvar inputType;\n\nvar getinputs = function() {\n    inputTags = document.getElementsByTagName(\"input\");\n    console.log(inputTags)\n    for (var i = 0; i < inputTags.length; i++) {\n        inputTags[i].addEventListener('click', openModal, false)\n    }\n}\n\nsetTimeout(function(){ getinputs(); }, 1000);\n\nvar inputTarget;\n\nvar openModal = function() {\n    inputType = event.target.type\n    inputTarget = event.target\n    var layoutName;\n    if (inputType == \"number\"){\n        //inputTarget.type = \"number\" //hack because chrome doesn't allow setselection in number inputs\n        //inputTarget.value = \"\"\n        layoutName = \"numbers_only\"\n    }else{\n        layoutName = \"english\"\n    }\n    $('#vkeyname').text(event.target.value)\n    $('#keyboard').unbind().removeData();\n    modal.style.display = \"block\";\n    $('#keyboard').jkeyboard({\n        layout: layoutName,\n        input: $('#'+$(this).attr('id'))\n    });\n}\n\n\n// Get the <span> element that closes the modal\nvar span = document.getElementsByClassName(\"close\")[0];\n\n// When the user clicks on <span> (x), close the modal\n//span.onclick = function(event) {\n  //closeModal()\n//}\n\n// When the user clicks anywhere outside of the modal, close it\nwindow.onclick = function(event) {\n    var source = event.target;\n    if (source == modal || source == span) {\n        closeModal(source)\n    }\n};\n\nvar closeModal = function(source){\n    //console.log(\"closing\")\n    modal.style.display = \"none\";\n   \n    if (inputType == \"number\"){\n        inputTarget.type = \"number\" //hack because chrome doesn't allow selectionstart on number inputs\n    }\n}\n\n</script>\n<script>\n\nvar clickState = 1;\nvar btn = document.querySelector('.VK');\n\nbtn.addEventListener('click', function(){\n\n  if (clickState == 0) {\n    this.textContent = 'V-KeyBoard On';\n    modal = document.getElementById('myModal');\n    clickState = 1;\n  } else {\n    this.textContent = 'V-KeyBoard Off';\n    modal = document.getElementById('empty');\n    clickState = 0;\n  }\n\n});\n</script>\n\n<style>\n.VK{\n    position: fixed;\n    top: 60px;\n    right: 20px;\n    height: 30px;\n}\n</style>\n\n<!-- Delete below two lines to remove button -->\n\n<!-- <div id=\"empty\"></div>\n<button class=\"VK\">V-KeyBoard On</button> -->",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "x": 480,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b0082414.a70db8",
+        "type": "exec",
+        "z": "2089cd.9333b634",
+        "command": "sudo shutdown -h now",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 750,
+        "y": 720,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "33a60482.e4ea9c",
+        "type": "inject",
+        "z": "2089cd.9333b634",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 440,
+        "y": 720,
+        "wires": [
+            [
+                "b0082414.a70db8"
+            ]
+        ]
+    },
+    {
+        "id": "d1a0e9b4.5bd028",
+        "type": "ui_button",
+        "z": "62ba2bde.f2d8e4",
+        "name": "",
+        "group": "6a4d510d.5de65",
+        "order": 10,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "SUBMIT",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 460,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1fdbed8e.b28012",
+        "type": "debug",
+        "z": "17a728c6.565827",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "10b9f727.b14099",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "OutsideTemp",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1350,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9e3fe247.18737",
+        "type": "inject",
+        "z": "17a728c6.565827",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 1110,
+        "y": 360,
+        "wires": [
+            [
+                "10b9f727.b14099"
+            ]
+        ]
+    },
+    {
+        "id": "5f146b9.0954394",
+        "type": "debug",
+        "z": "17a728c6.565827",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1730,
+        "y": 2280,
+        "wires": []
+    },
+    {
+        "id": "734c8266.a822bc",
+        "type": "inject",
+        "z": "17a728c6.565827",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "8",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 750,
+        "y": 2620,
+        "wires": [
+            [
+                "3685356a.4ddbca"
+            ]
+        ]
+    },
+    {
+        "id": "3685356a.4ddbca",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "Outside",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "OutsideTemp",
+                "tot": "global"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Outside",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 2620,
+        "wires": [
+            [
+                "282ff62b.38cfda"
+            ]
+        ]
+    },
+    {
+        "id": "468f435c.80a1dc",
+        "type": "inject",
+        "z": "17a728c6.565827",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 1350,
+        "y": 2280,
+        "wires": [
+            [
+                "3eee3d3a.179fe2"
+            ]
+        ]
+    },
+    {
+        "id": "3eee3d3a.179fe2",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "InsideTemp",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1560,
+        "y": 2400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "40198d21.8b9c54",
+        "type": "inject",
+        "z": "17a728c6.565827",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "8",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "4",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 750,
+        "y": 2680,
+        "wires": [
+            [
+                "f9a266ce.926e48"
+            ]
+        ]
+    },
+    {
+        "id": "f9a266ce.926e48",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "Inside",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "InsideTemp",
+                "tot": "global"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Inside",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 910,
+        "y": 2680,
+        "wires": [
+            [
+                "282ff62b.38cfda"
+            ]
+        ]
+    },
+    {
+        "id": "6d7410c.9204ef",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "acTimerRunning",
+                "pt": "global",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 1900,
+        "wires": [
+            [
+                "5dea00c5.72eb3",
+                "fc878b19.611c18",
+                "90de10d4.aa51f",
+                "9581f9ad.5128d8"
+            ]
+        ]
+    },
+    {
+        "id": "75719cff.d644f4",
+        "type": "switch",
+        "z": "17a728c6.565827",
+        "name": "",
+        "property": "acTimerRunning",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 710,
+        "y": 1900,
+        "wires": [
+            [
+                "6d7410c.9204ef"
+            ]
+        ]
+    },
+    {
+        "id": "e5942be6.1aef48",
+        "type": "delay",
+        "z": "17a728c6.565827",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "12",
+        "timeoutUnits": "minutes",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 790,
+        "y": 1980,
+        "wires": [
+            [
+                "99f8039d.0deae"
+            ]
+        ]
+    },
+    {
+        "id": "60fb46da.59b8a8",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 1980,
+        "wires": [
+            [
+                "5dea00c5.72eb3",
+                "fc878b19.611c18",
+                "90de10d4.aa51f",
+                "64cf7fcb.db538"
+            ]
+        ]
+    },
+    {
+        "id": "afd18cca.245b6",
+        "type": "inject",
+        "z": "17a728c6.565827",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 970,
+        "y": 2100,
+        "wires": [
+            [
+                "60fb46da.59b8a8"
+            ]
+        ]
+    },
+    {
+        "id": "9581f9ad.5128d8",
+        "type": "switch",
+        "z": "17a728c6.565827",
+        "name": "",
+        "property": "acTimerRunning",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 650,
+        "y": 1980,
+        "wires": [
+            [
+                "e5942be6.1aef48"
+            ]
+        ]
+    },
+    {
+        "id": "99f8039d.0deae",
+        "type": "switch",
+        "z": "17a728c6.565827",
+        "name": "",
+        "property": "acEnable",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 950,
+        "y": 1980,
+        "wires": [
+            [
+                "60fb46da.59b8a8"
+            ]
+        ]
+    },
+    {
+        "id": "a5b9f6f.38b1608",
+        "type": "change",
+        "z": "17a728c6.565827",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "acTimerRunning",
+                "pt": "global",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1560,
+        "y": 2040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "64cf7fcb.db538",
+        "type": "delay",
+        "z": "17a728c6.565827",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "25",
+        "timeoutUnits": "minutes",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 910,
+        "y": 1920,
+        "wires": [
+            [
+                "6d7410c.9204ef"
             ]
         ]
     }
